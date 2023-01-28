@@ -1,0 +1,35 @@
+.fondo {
+    background-color: #ffffff;
+}
+
+.centrado {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.h5 {
+    text-align: center;
+    color: rgb(33, 32, 32);
+    font-size: 25px;
+}
+
+div p {
+    text-align: center;
+    color: rgb(33, 32, 32);
+    font-size: 20px;
+}
+
+th,
+td {
+    text-align: center;
+    color: rgb(0, 0, 0);
+    font-size: 20px;
+    width: 200px;
+    margin: 0 auto;
+    background-color: aqua; 
+}

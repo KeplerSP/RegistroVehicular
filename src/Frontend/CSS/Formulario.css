@@ -1,0 +1,55 @@
+.fondo {
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+.centrado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.centrarImagen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.h5 {
+    text-align: center;
+    color: rgb(33, 32, 32);
+    font-size: 25px;
+}
+
+div p {
+    text-align: center;
+    color: rgb(33, 32, 32);
+    font-size: 20px;
+}
+
+input {
+    text-align: center;
+    color: rgb(0, 0, 0);
+    font-size: 20px;
+    margin: 0 auto;
+}
+
+.boton2 {
+    width: 6em;
+    text-align: center;
+    color: rgb(0, 0, 0);
+    font-size: 20px;
+    margin: 0 auto;
+    border-radius: 0.3rem;
+}
+
+.boton2:hover {
+    cursor: pointer;
+    background-color: rgb(144, 157, 221);
+}

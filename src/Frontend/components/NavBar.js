@@ -1,6 +1,7 @@
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
-import Icono from './img/person-circle.svg';
+import Icono from '../img/person-circle.svg';
+import { Link } from 'react-router-dom';
 
 function NavbarBrand() {
   // AGREGAR UN SIGNO DE SESION AL EXTREMO DERECHO -> Vincular esto con React-Root
@@ -18,7 +19,7 @@ function NavbarBrand() {
             />{' '}
             PLANET EXPRESS
           </Navbar.Brand>
-          <Navbar.Brand href="/admin">
+          <Link to="/admin">
             <img
               alt="Logo de Planet Express"
               src={Icono}
@@ -26,7 +27,7 @@ function NavbarBrand() {
               height="30"
               className="d-inline-block align-top"
             />{' '}
-          </Navbar.Brand>
+          </Link>
         </Container>
       </Navbar>
     </>

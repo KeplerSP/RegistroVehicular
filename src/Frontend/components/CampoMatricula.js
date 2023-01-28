@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import '../CSS/Buscador.css';
 
+//* Componente "buscador" de matriculas
 function CampoMatricula(props) {
-
   // Tenemos que manejar que ocurre cuando cambia el contenido del formulario.(el usuario escribe)
   const [input, setInput] = useState('');
 
@@ -22,21 +23,23 @@ function CampoMatricula(props) {
   }
 
   return (
-    <>
+    <div className="centrado cuerpo">
       <h5>Matricula</h5>
       <form onSubmit={manejarEnvio} >
         <input
+          className="buscador"
           type='text'
           placeholder='Ejemplo DBA-005'
           name='Texto'
           onChange={manejarCambio}
+          required
         />
         <br />
-        <button>
+        <button className="boton">
           BUSCAR
         </button>
       </form>
-    </>
+    </div>
   );
 }
 

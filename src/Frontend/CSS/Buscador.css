@@ -40,3 +40,18 @@ h5 {
     background-color: rgb(0, 26, 158);
     cursor: pointer;
 }
+
+.Link {
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.Link:hover {
+    color: rgb(0, 166, 255);
+    cursor: pointer;
+}
+
+.Link:Focus {
+    color: rgb(0, 166, 255);
+}

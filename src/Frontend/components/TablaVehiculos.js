@@ -1,5 +1,4 @@
 import Table from 'react-bootstrap/Table';
-import '../CSS/InfoMatricula.css';
 
 export function TablaVehiculos(props) {
   let cantidad = props.cantidad;

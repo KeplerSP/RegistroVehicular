@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import EditarPerfil from "./EditarPerfil";
 import '../CSS/Formulario.css';
 import { Toaster, toast } from 'react-hot-toast';
 
@@ -41,7 +42,7 @@ function CampoBusqueda() {
 
   let contenido;
   if (existe) {
-    contenido = <> <h5>MATRICULA HALLADA CON EXITO</h5> </>
+    contenido = <> <EditarPerfil matricula={input} /> </>
   } else {
     contenido =
       <div className="centrado cuerpo">

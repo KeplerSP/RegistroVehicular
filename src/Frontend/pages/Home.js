@@ -26,14 +26,18 @@ function Home() {
       </header>
       <body>
         {loadForm ? (
-          <Container>
-            <CampoMatricula onSubmit={pasarMatricula} />
-          </Container>
+          <>
+            <Container>
+              <CampoMatricula onSubmit={pasarMatricula} />
+            </Container>
+            <Footer />
+          </>
         ) : (
           <InfoMatricula matricula={matricula} />
         )}
       </body>
     </div>
+
   );
 }
 

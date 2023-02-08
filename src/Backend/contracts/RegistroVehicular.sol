@@ -1,21 +1,29 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
 // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
 
-contract RegistroVehicular {
-    address owner;
+contract RegistroVehicular is Ownable {
+    address ownerContrato;
 
     constructor() {
-        owner = msg.sender;
+        ownerContrato = owner();
         addVehiculo("nombre conductor", "emision", "vencimiento", "matricula");
     }
 
+    //* Mapping para el personal autorizado
+    mapping(address => bool) public autorizados;
+
     //* Eventos
-    event NewMatricula(string matricula, uint timeStamp, InfoMatricula info);
-    event UpdateMatricula(string matricula, uint timeStamp, InfoMatricula info);
+    event NewMatricula(string matricula, uint256 timeStamp, InfoMatricula info);
+    event UpdateMatricula(
+        string matricula,
+        uint256 timeStamp,
+        InfoMatricula info
+    );
     event PersonalAgregado(string message, address newPersonal);
 
     //* Structs
@@ -23,8 +31,6 @@ contract RegistroVehicular {
         string nombre;
         string fecha;
     }
-
-    Infracciones[] private structInfracciones;
 
     struct InfoMatricula {
         string nombre;
@@ -34,19 +40,29 @@ contract RegistroVehicular {
         Infracciones[] infracciones;
     }
 
-    // InfoMatricula private infoMatricula;
+    //* Modifier
+    modifier personalAutorizado(address _addr) {
+        require(
+            autorizados[_addr] == true || _addr == ownerContrato,
+            "No tienes permisos de administrador"
+        );
+        _;
+    }
 
-    //! Solo owner
-    function agregarPersonal(address newPersonal) public {
+    //todo: Función para agregar personal autorizado -> administradores
+    function agregarPersonal(address newPersonal) public onlyOwner {
+        autorizados[newPersonal] = true;
         emit PersonalAgregado("Nuevo personal agregado: ", newPersonal);
     }
 
+    //todo:  Función para registrar Vehiculos
     function addVehiculo(
         string memory _nombre,
         string memory _emision,
         string memory _vencimiento,
         string memory _matricula
-    ) public {
+    ) public personalAutorizado(msg.sender) {
+        /// Por defecto un vehiculo se registrará con 0 infracciones
         InfoMatricula memory info;
         Infracciones[] memory infracciones;
 
@@ -56,17 +72,20 @@ contract RegistroVehicular {
         info.matricula = _matricula;
         info.infracciones = infracciones;
 
-        //* Emitimos un evento sobre la matricula creada
-        emit NewMatricula(info.matricula, 0, info);
+        console.log("TimeStamp: ", block.timestamp);
+
+        //* Emitimos un evento para la matricula creada
+        emit NewMatricula(info.matricula, block.timestamp, info);
     }
 
+    //todo:  Función para editar información de un vehiculo -> Agregar infracciones
     function editInfo(
         InfoMatricula memory _infoMatricula,
         Infracciones[] memory _infracciones
-    ) public {
+    ) public personalAutorizado(msg.sender) {
         /* 
-        array 1 => 4 elementos --- posicion: [0,1,2,3]
-        array 2 => 3 elementos --- posicion: [4,5,6]
+        *array 1 => 4 elementos --- posicion: [0,1,2,3]
+        *array 2 => 3 elementos --- posicion: [4,5,6]
         */
         uint256 cantidad = _infoMatricula.infracciones.length +
             _infracciones.length;
@@ -99,7 +118,11 @@ contract RegistroVehicular {
         /// Actualizamos el valor del array dentro del struct '_infoMatricula' con el nuevo array recien creado("infracciones")
         _infoMatricula.infracciones = infracciones;
 
-        //* Emitimos un evento sobre la matricula actualizada
-        emit UpdateMatricula(_infoMatricula.matricula, 1, _infoMatricula);
+        //* Emitimos un evento para la matricula actualizada
+        emit UpdateMatricula(
+            _infoMatricula.matricula,
+            block.timestamp,
+            _infoMatricula
+        );
     }
 }

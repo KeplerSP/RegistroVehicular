@@ -11,7 +11,6 @@ contract RegistroVehicular is Ownable {
 
     constructor() {
         ownerContrato = owner();
-        addVehiculo("nombre conductor", "emision", "vencimiento", "matricula");
     }
 
     //* Mapping para el personal autorizado
@@ -72,8 +71,6 @@ contract RegistroVehicular is Ownable {
         info.matricula = _matricula;
         info.infracciones = infracciones;
 
-        console.log("TimeStamp: ", block.timestamp);
-
         //* Emitimos un evento para la matricula creada
         emit NewMatricula(info.matricula, block.timestamp, info);
     }
@@ -83,10 +80,10 @@ contract RegistroVehicular is Ownable {
         InfoMatricula memory _infoMatricula,
         Infracciones[] memory _infracciones
     ) public personalAutorizado(msg.sender) {
-        /* 
-        *array 1 => 4 elementos --- posicion: [0,1,2,3]
-        *array 2 => 3 elementos --- posicion: [4,5,6]
-        */
+        /*
+         *array 1 => 4 elementos --- posicion: [0,1,2,3]
+         *array 2 => 3 elementos --- posicion: [4,5,6]
+         */
         uint256 cantidad = _infoMatricula.infracciones.length +
             _infracciones.length;
 

@@ -6,7 +6,7 @@ Try running some of the following tasks:
 
 ```shell
 npx hardhat help
-npx hardhat test
+npx hardhat test src/Backend/test/RegistroVehicular.js
 REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat run src/Backend/scripts/deploy.js

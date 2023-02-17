@@ -1,48 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import EditarPerfil from "./EditarPerfil";
 import '../CSS/Formulario.css';
 import { Toaster, toast } from 'react-hot-toast';
+import getEvents from "../GetEvents";
 
 import Card from 'react-bootstrap/Card';
 import pic from '../img/profile_pic.png';
 
-function CampoBusqueda() {
+function CampoBusqueda(props) {
   // Tenemos que manejar que ocurre cuando cambia el contenido del formulario.(el usuario escribe)
   const [input, setInput] = useState('');
-  const [existe, setExiste] = useState(false);
-
-  //! Conectar con la BlockChain para consultar la existencia de tal matricula
-  let matriculas = ["matricula1", "abc123"];
+  const [existe, setExiste] = useState(false)
+  const [data, setData] = useState([]);
 
   const manejarCambio = e => {
     // e.target.value => nos va a permitir extraer el valor del campo de texto que introdujo el usuario.
     setInput(e.target.value);
   }
-
   // Se recibe como argumento un evento, este valor nos va a permitir que la pagina
   // se vuelva a cargar cuando se envie el formulario.
-  const manejarEnvio = e => {
+  const manejarEnvio = async (e) => {
     e.preventDefault(); //->Evita que se vuelva a carga la app al enviar el formulario.
+    console.log(props.contrato)
+    /// Comprobamos con los eventos emitidos en la BlockChain si la matricula que se busca existe
+    const data = await getEvents(props.contrato, input)
+    console.log("data", data)
+    if (data[3] != "") {
+      toast.success('¡Busqueda exitosa!')
+      setExiste(true)
+      setData(data)
+    } else {
+      /// En caso contrario, emitir una alerta
+      toast.error("La matricula no esta en nuestro sistema 🙁")
+    }
 
-    /// Capturar matricula ingresada 
-    var encontrada = false;
-    matriculas.forEach(function (elemento, indice, array) {
-      if (input == elemento) {
-        encontrada = true;
-        setExiste(true);
-      }
-    })
-    encontrada ? toast.success('¡Busqueda exitosa!')
-      :
-      toast.error("Matricula no encontrada 🙁")
   }
 
   let contenido;
   if (existe) {
-    contenido = <> <EditarPerfil matricula={input} /> </>
+    contenido = <> <EditarPerfil data={data} contrato={props.contrato} /> </>
   } else {
     contenido =
       <div className="centrado cuerpo">
@@ -73,26 +72,19 @@ function CampoBusqueda() {
 
 //* Componente que contiene el formulario para registrar un vehiculo
 function Formulario(props) {
-  /// Tenemos que manejar que ocurre cuando cambia el contenido del formulario.(el usuario escribe)
-  const [input, setInput] = useState([""]);
-
   // Se recibe como argumento un evento, este valor nos va a permitir que la pagina
   // se vuelva a cargar cuando se envie el formulario.
-  const manejarEnvio = e => {
+  const manejarEnvio = async (e) => {
     e.preventDefault(); ///->Evita que se vuelva a carga la app al enviar el formulario.
 
     var nombres = document.getElementById("nombre");
     var fechaEmision = document.getElementById("fechaEmision");
-    var fechaVencimiento = document.getElementById("fechaVencimiento");
+    // var fechaVencimiento = document.getElementById("fechaVencimiento"); /// NO USAR
     var modelo = document.getElementById("modelo");
     var matricula = document.getElementById("matricula");
 
-    setInput([nombres.value, fechaEmision.value, fechaVencimiento.value, modelo.value, matricula.value]);
-
-    console.log("Datos pasados: ", input);
-
-    ///•onSubmit -> Función que se pasará como parámetro mediante un prop. (el nombre es un estandar)
-    props.onSubmit(input);
+    /// Enviamos a la BlokChain los datos capturados
+    await (await props.contrato.addVehiculo(nombres.value, fechaEmision.value, modelo.value, matricula.value)).wait();
   }
 
   let content;
@@ -126,7 +118,7 @@ function Formulario(props) {
                   <Col sm={12} md={12} lg={6}>
                     <h5 className='h5'>Emision del carnet</h5>
                     <input
-                      type='datetime-local'
+                      type='date'
                       placeholder='Ejemplo DBA-005'
                       name='Texto'
                       id="fechaEmision"
@@ -136,7 +128,7 @@ function Formulario(props) {
                   <Col sm={12} md={12} lg={6}>
                     <h5 className='h5'>Vencimiento</h5>
                     <input
-                      type='datetime-local'
+                      type='date'
                       placeholder='Ejemplo DBA-005'
                       name='Texto'
                       id="fechaVencimiento"
@@ -175,11 +167,9 @@ function Formulario(props) {
             </button>
           </form>
         </Container>
-        <br />
-        <p>Crear una función para actualizar información de acuerdo a una matricula</p>
       </div>
   } else {
-    content = <><CampoBusqueda /></>
+    content = <><CampoBusqueda contrato={props.contrato} /></>
   }
 
   return (

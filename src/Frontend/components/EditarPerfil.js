@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import '../CSS/Formulario.css';
+import { Toaster, toast } from 'react-hot-toast';
 
 export default function EditarPerfil(props) {
   /// Tenemos que manejar que ocurre cuando cambia el contenido del formulario.(el usuario escribe)
@@ -15,15 +16,13 @@ export default function EditarPerfil(props) {
   const cargarDatos = e => {
     e.preventDefault(); ///->Evita que se vuelva a carga la app al enviar el formulario.
 
-    var infraccion = document.getElementById("infraccion");
-    var fecha = document.getElementById("fecha");
+    var a = document.getElementById("infraccion").value;
+    var b = document.getElementById("fecha").value;
 
-    var a = infraccion.value;
-    var b = fecha.value;
-
-    const delitos = [{ a, b }, ...input];
+    const delitos = [{ nombre: a, fecha: b }, ...input];
 
     setInput(delitos);
+    console.log("DELITOS", delitos)
 
     document.getElementById("infraccion").value = "";
     document.getElementById("fecha").value = "";
@@ -39,35 +38,56 @@ export default function EditarPerfil(props) {
 
       /// Convertir el objeto JSON en un objeto normal
       var dato = JSON.parse(extra);
-      const {a, b} = dato
+      const { a, b } = dato
       console.log(`Elementos del objeto: ${a} y ${b}\n`);
     });
   }
 
   /// Esta función se encargará de enviar los datos a la BlockChain mediante el Smart Contract
-  const manejarEnvio = e => {
+  const manejarEnvio = async (e) => {
     e.preventDefault();
 
-    cargarDatos();
+    let vigencia = document.getElementById("vigencia").checked;
+    let inputFinal;
+    if (document.getElementById("infraccion").value != "" && document.getElementById("fecha").value != "") {
 
-    console.log(`Datos Enviados a la BlockChain: ${input}`);
+      var a = document.getElementById("infraccion").value;
+      var b = document.getElementById("fecha").value;
 
-    /// •onSubmit -> Función que se pasará como parámetro mediante un prop. (el nombre es un estandar)
-    /// Se le pasarán las multas realizadas mediante 'input' y luego se operará con "multasHechas" para obtener
-    /// sus valores individuales. 
-    props.onSubmit(input);
+      inputFinal = [{ nombre: a, fecha: b }, ...input];
+
+      document.getElementById("infraccion").value = "";
+      document.getElementById("fecha").value = "";
+    } else {
+      toast.error('No hay información para enviar')
+      return
+    }
+
+    /// Enviamos los datos a la BlockChain
+    await (await props.contrato.editInfo(props.data, vigencia, inputFinal)).wait();
+
+    toast.success('DATOS ENVIADOS CORRECTAMENTE')
+    /// Al final vaciamos input
+    setInput([])
   }
 
   return (
     <>
+      <Toaster />
       <div className="p-3 pe-5 ps-5">
-        <InfoMatricula matricula={props.matricula} />
+        <InfoMatricula data={props.data} />
       </div>
       <div className='fondo pt-5'>
         <Container>
           <h1 className="h5"><b>INGRESE LOS NUEVOS DATOS</b></h1>
-          <br />
+          <br /> <br />
           <form onSubmit={cargarDatos}>
+            <h5 className='h5'>Carnet Vigente</h5>
+            <label class="switch">
+              <input type="checkbox" id="vigencia" />
+              <span class="slider round"></span>
+            </label>
+            <br /> <br />
             <Row>
               <Col sm={12} md={8} lg={8}>
                 <h5 className='h5'>Infraccion</h5>
@@ -83,7 +103,7 @@ export default function EditarPerfil(props) {
               <Col sm={12} md={4} lg={4}>
                 <h5 className='h5'>Fecha</h5>
                 <input
-                  type='datetime-local'
+                  type='date'
                   name='Texto'
                   id="fecha"
                   required

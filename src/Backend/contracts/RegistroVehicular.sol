@@ -2,9 +2,6 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "hardhat/console.sol";
-
-// console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
 
 contract RegistroVehicular is Ownable {
     address ownerContrato;
@@ -34,8 +31,9 @@ contract RegistroVehicular is Ownable {
     struct InfoMatricula {
         string nombre;
         string emision;
-        string vencimiento;
+        string modeloVehiculo;
         string matricula;
+        bool vigencia;
         Infracciones[] infracciones;
     }
 
@@ -58,7 +56,7 @@ contract RegistroVehicular is Ownable {
     function addVehiculo(
         string memory _nombre,
         string memory _emision,
-        string memory _vencimiento,
+        string memory _modeloVehiculo,
         string memory _matricula
     ) public personalAutorizado(msg.sender) {
         /// Por defecto un vehiculo se registrará con 0 infracciones
@@ -67,8 +65,9 @@ contract RegistroVehicular is Ownable {
 
         info.nombre = _nombre;
         info.emision = _emision;
-        info.vencimiento = _vencimiento;
+        info.modeloVehiculo = _modeloVehiculo;
         info.matricula = _matricula;
+        info.vigencia = true;
         info.infracciones = infracciones;
 
         //* Emitimos un evento para la matricula creada
@@ -78,6 +77,7 @@ contract RegistroVehicular is Ownable {
     //todo:  Función para editar información de un vehiculo -> Agregar infracciones
     function editInfo(
         InfoMatricula memory _infoMatricula,
+        bool _vigencia,
         Infracciones[] memory _infracciones
     ) public personalAutorizado(msg.sender) {
         /*
@@ -111,9 +111,11 @@ contract RegistroVehicular is Ownable {
         }
         j = 0;
 
-        /// Ahora 'infracciones' contiene los elementos pasados más los nuevo ingresados por parametro
+        /// Ahora 'infracciones' contiene los elementos pasados más los nuevos ingresados por parametro
         /// Actualizamos el valor del array dentro del struct '_infoMatricula' con el nuevo array recien creado("infracciones")
         _infoMatricula.infracciones = infracciones;
+        
+        _infoMatricula.vigencia = _vigencia;
 
         //* Emitimos un evento para la matricula actualizada
         emit UpdateMatricula(

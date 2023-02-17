@@ -9,7 +9,7 @@ module.exports = {
     cache: "./src/Backend/cache",
     tests: "./src/Backend/test"
   },
-  defaultNetwork: "hardhat",
+  defaultNetwork: "ganache",
   networks: {
     ganache: {
       url: "http://127.0.0.1:7545"

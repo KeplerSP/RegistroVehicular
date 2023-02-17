@@ -9,9 +9,7 @@ import { TablaVehiculos, TablaInfracciones } from '../components/TablaVehiculos'
 //* Pestaña que mostrará la información referente a una matricula
 function InfoMatricula(props) {
 
-  //! De acuerdo a la matricula, buscaremos en la BlockcChain la informacion relacionada con esta.
-  /// La información vendrá en forma de un objeto.
-  /// Contendrá: {nombre, emision del carnet, fecha de vencimiento, matricula, ¿Vehiculos a su nombre?, Infracciones:[{nombre, fecha}] }
+  const data = props.data
 
   return (
     <div className='fondo'>
@@ -25,22 +23,22 @@ function InfoMatricula(props) {
           </Col>
           <Col sm={12} md={12} lg={8}>
             <Row>
-              <h5 className='h5'><b>Patrick Bateman</b></h5>
+              <h5 className='h5'><b>{data[0]}</b></h5>
             </Row>
             <Row>
-              <p>Carnet de conducir: <b>Vigente</b> <br />
-                Emitido el 10/10/2022
+              <p>Carnet de conducir: <b>{data[4] ? "VIGENTE" : "VENCIDO"}</b> <br />
+                Emitido: {data[1]}
               </p>
             </Row>
             <Row>
-              <p>Matricula: {props.matricula}</p>
+              <p>Matricula: {data[3]}</p>
             </Row>
             <Row>
               <p>Vehiculos a su nombre</p>
               <TablaVehiculos
                 cantidad="1"
-                modelo="Nisan 2000"
-                matricula={props.matricula}
+                modelo={data[2]}
+                matricula={data[3]}
               />
             </Row>
           </Col>
@@ -48,9 +46,9 @@ function InfoMatricula(props) {
         <br />
         <h5 className='h5'>INFRACCIONES:</h5>
         <TablaInfracciones
-          cantidad="1"
-          name="Exceso de velocidad"
-          fecha="21/11/2001" />
+          cantidad={data[5].length}
+          infracciones={data[5]}
+        />
       </Container>
     </div>
 

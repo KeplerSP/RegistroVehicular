@@ -6,9 +6,6 @@ import '../CSS/Buscador.css';
 
 //* Pestaña que mostrará el componente "Formulario"(Agregar y Editar) luego de conectarse a Metamask 
 function IngresarDatos(props) {
-
-  //! props : loading - web3Handler
-
   let header;
   if (!props.loading) {
     // La variable 'content' va a recoger toda la información, información que se pintará en el Main
@@ -35,6 +32,7 @@ function IngresarDatos(props) {
       </>
   }
 
+  /// Outlet contiene formulario
   return (
     <div >
       <header> {header} </header>

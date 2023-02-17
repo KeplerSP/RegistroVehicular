@@ -1,9 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-const toWei = (num) => ethers.utils.parseEther(num.toString())
-const fromWei = (num) => ethers.utils.formatEther(num)
-
 ///Empecemos con la descripción hacia un nuevo testing
 describe("RegistroVehicular Testing", function () {
   ///•Empecemos con las variables que necesitamos(para el RegistroVehicular,Deployer,direcciones,etc)
@@ -78,7 +75,7 @@ describe("RegistroVehicular Testing", function () {
       const tx = await registroVehicular.connect(addr1).addVehiculo(
         "Patrick Bateman",
         "09/02/2023",
-        "10/02/2023",
+        "NISAN 2010",
         "ABC123"
       );
       await tx.wait();
@@ -89,7 +86,7 @@ describe("RegistroVehicular Testing", function () {
 
       let prueba = (events[0].args)[2];
 
-      for (let index = 0; index < 5; index++) {
+      for (let index = 0; index < prueba.length; index++) {
         const element = prueba[index];
         console.log(`Dato N°${index + 1}: ${element}`);
       }
@@ -108,7 +105,8 @@ describe("RegistroVehicular Testing", function () {
     it("Solo personal autorizado puede editar informacion", async function () {
       /// Fallar en caso una cuenta no autorizada intente ejecutar la función
       await expect(registroVehicular.connect(addr2).editInfo(
-        ["misky", "emitido ayer", "vencido hoy", "matricula1", []],
+        ["Patrick Bateman", "09/02/2023", "NISAN 2010", "ABC123", true, []],
+        false,
         [{ nombre: "infraccion", fecha: "fecha" }]
       )).to.be.revertedWith(
         "No tienes permisos de administrador"
@@ -122,7 +120,8 @@ describe("RegistroVehicular Testing", function () {
       }
       /// Agregamos un nuevo vehiculo y verificamos el evento respectivo
       const tx = await registroVehicular.connect(addr1).editInfo(
-        ["Patrick Bateman", "09/02/2023", "10/02/2023", "ABC123", []],
+        ["Patrick Bateman", "09/02/2023", "NISAN 2010", "ABC123", true, [data]],
+        false,
         [data]
       )
       await tx.wait();
@@ -132,13 +131,13 @@ describe("RegistroVehicular Testing", function () {
       /// 'events' recoge todas la coincidencias con el evento "NewMatricula()"
 
       let prueba = (events[0].args)[2];
-
+      
       for (let index = 0; index < prueba.length; index++) {
         const element = prueba[index];
         console.log(`Dato N°${index + 1}: ${element}`);
 
         /// Entramos al arreglo de infracciones y obtenemos su elementos individuales
-        if (index == 4) {
+        if (index == 5) {
           /// En este caso el array de infracciones solo contiene un objeto de tipo infraccion
           console.log("Arreglo Completo:", element);
           console.log("CONDICION:", element[0][0]);

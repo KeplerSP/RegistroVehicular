@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InfoMatricula from "../pages/InfoMatricula";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -47,17 +47,22 @@ export default function EditarPerfil(props) {
   const manejarEnvio = async (e) => {
     e.preventDefault();
 
-    let vigencia = document.getElementById("vigencia").checked;
+    let vigencia;
     let inputFinal;
-    if (document.getElementById("infraccion").value != "" && document.getElementById("fecha").value != "") {
+    if (input.length > 0) {
+      vigencia = document.getElementById("vigencia").checked;
+      if (document.getElementById("infraccion").value != "" && document.getElementById("fecha").value != "") {
 
-      var a = document.getElementById("infraccion").value;
-      var b = document.getElementById("fecha").value;
+        var a = document.getElementById("infraccion").value;
+        var b = document.getElementById("fecha").value;
 
-      inputFinal = [{ nombre: a, fecha: b }, ...input];
+        inputFinal = [{ nombre: a, fecha: b }, ...input];
 
-      document.getElementById("infraccion").value = "";
-      document.getElementById("fecha").value = "";
+        document.getElementById("infraccion").value = "";
+        document.getElementById("fecha").value = "";
+      } else {
+        inputFinal = input;
+      }
     } else {
       toast.error('No hay información para enviar')
       return
@@ -70,6 +75,10 @@ export default function EditarPerfil(props) {
     /// Al final vaciamos input
     setInput([])
   }
+
+  useEffect(() => {
+    document.getElementById("vigencia").checked = true;
+  }, [])
 
   return (
     <>

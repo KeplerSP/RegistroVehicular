@@ -91,6 +91,12 @@ input {
     background-color: rgb(144, 228, 148);
 }
 
+.centrarFormulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 /* DISEÑO DEL SWITCH */
 /* The switch - the box around the slider */
 .switch {

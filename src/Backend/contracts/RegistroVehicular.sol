@@ -47,7 +47,7 @@ contract RegistroVehicular is Ownable {
     }
 
     //todo: Función para agregar personal autorizado -> administradores
-    function agregarPersonal(address newPersonal) public onlyOwner {
+    function agregarPersonal(address newPersonal) external onlyOwner {
         autorizados[newPersonal] = true;
         emit PersonalAgregado("Nuevo personal agregado: ", newPersonal);
     }
@@ -58,7 +58,7 @@ contract RegistroVehicular is Ownable {
         string memory _emision,
         string memory _modeloVehiculo,
         string memory _matricula
-    ) public personalAutorizado(msg.sender) {
+    ) external personalAutorizado(msg.sender) {
         /// Por defecto un vehiculo se registrará con 0 infracciones
         InfoMatricula memory info;
         Infracciones[] memory infracciones;
@@ -79,7 +79,7 @@ contract RegistroVehicular is Ownable {
         InfoMatricula memory _infoMatricula,
         bool _vigencia,
         Infracciones[] memory _infracciones
-    ) public personalAutorizado(msg.sender) {
+    ) external personalAutorizado(msg.sender) {
         /*
          *array 1 => 4 elementos --- posicion: [0,1,2,3]
          *array 2 => 3 elementos --- posicion: [4,5,6]

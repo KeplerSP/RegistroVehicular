@@ -16,12 +16,12 @@ function InfoMatricula(props) {
       <Container className='centrado'>
         <br />
         <Row>
-          <Col sm={12} md={12} lg={4} >
+          <Col className="centrarFormulario">
             <Card style={{ width: '16rem' }} className="mx-auto d-block">
               <Card.Img variant="top" src={pic} />
             </Card>
           </Col>
-          <Col sm={12} md={12} lg={8}>
+          <Col sm={12} md={12} lg={8} className="centrarFormulario">
             <Row>
               <h5 className='h5'><b>{data[0]}</b></h5>
             </Row>

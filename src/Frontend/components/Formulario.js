@@ -6,9 +6,7 @@ import EditarPerfil from "./EditarPerfil";
 import '../CSS/Formulario.css';
 import { Toaster, toast } from 'react-hot-toast';
 import getEvents from "../GetEvents";
-
-import Card from 'react-bootstrap/Card';
-import pic from '../img/profile_pic.png';
+import UploadImage from "./UploadImages";
 
 function CampoBusqueda(props) {
   // Tenemos que manejar que ocurre cuando cambia el contenido del formulario.(el usuario escribe)
@@ -94,15 +92,12 @@ function Formulario(props) {
         <h1 className="h5">Ingrese los datos del usuario</h1>
         <br />
         <Container>
-          <br />
           <form onSubmit={manejarEnvio}>
             <Row>
-              <Col sm={12} md={12} lg={4} >
-                <Card style={{ width: '16rem' }} className="mx-auto d-block">
-                  <Card.Img variant="top" src={pic} />
-                </Card>
+              <Col sm={12} md={12} lg={4} className="centrarFormulario">
+                <UploadImage />
               </Col>
-              <Col sm={12} md={12} lg={8}>
+              <Col className="centrarFormulario">
                 <Row sm={12} md={12} lg={12}>
                   <h5 className='h5'>Nombres y Apellidos</h5>
                   <input
@@ -166,6 +161,7 @@ function Formulario(props) {
               REGISTRAR
             </button>
           </form>
+          <br />
         </Container>
       </div>
   } else {

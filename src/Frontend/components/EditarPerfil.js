@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import '../CSS/Formulario.css';
 import { Toaster, toast } from 'react-hot-toast';
+import swal from 'sweetalert';
 
 export default function EditarPerfil(props) {
   /// Tenemos que manejar que ocurre cuando cambia el contenido del formulario.(el usuario escribe)
@@ -28,23 +29,20 @@ export default function EditarPerfil(props) {
     document.getElementById("fecha").value = "";
   }
 
-  /// Obtener datos individuales de un objeto del array
-  const multasHechas = () => {
-    var extra;
-    input.map(multa => {
-      /// Convirtiendo a un objeto JSON
-      extra = JSON.stringify(multa);
-      console.log(`Objeto JSON: ${extra}\n`);
+  /// Esta función se encargará de enviar los datos a la BlockChain mediante el Smart Contract
+  const manejarEnvio = async (e, vigencia, inputFinal) => {
+    e.preventDefault();
 
-      /// Convertir el objeto JSON en un objeto normal
-      var dato = JSON.parse(extra);
-      const { a, b } = dato
-      console.log(`Elementos del objeto: ${a} y ${b}\n`);
-    });
+    /// Enviamos los datos a la BlockChain
+    await (await props.contrato.editInfo(props.data, vigencia, inputFinal)).wait();
+
+    toast.success('DATOS ENVIADOS CORRECTAMENTE')
+    /// Al final vaciamos input
+    setInput([])
   }
 
-  /// Esta función se encargará de enviar los datos a la BlockChain mediante el Smart Contract
-  const manejarEnvio = async (e) => {
+  //* Emitir una alerta antes de enviar datos a la BlockChain
+  const botonRegistrar = (e) => {
     e.preventDefault();
 
     let vigencia;
@@ -68,12 +66,22 @@ export default function EditarPerfil(props) {
       return
     }
 
-    /// Enviamos los datos a la BlockChain
-    await (await props.contrato.editInfo(props.data, vigencia, inputFinal)).wait();
-
-    toast.success('DATOS ENVIADOS CORRECTAMENTE')
-    /// Al final vaciamos input
-    setInput([])
+    swal({
+      title: "ENVIAR DATOS",
+      text: `Actualizar los siguientes datos de: ${props.data[0]} --- ${props.data[3]}
+      \nVigencia: ${vigencia}
+      \nInfracciones:
+      \n${JSON.stringify(inputFinal)}`,
+      icon: "info",
+      buttons: ["CANCELAR", "ACEPTAR"],
+    })
+      .then((sendData) => {
+        if (sendData) {
+          manejarEnvio(e, vigencia, inputFinal)
+        } else {
+          swal("Los datos no serán enviados");
+        }
+      });
   }
 
   useEffect(() => {
@@ -126,7 +134,7 @@ export default function EditarPerfil(props) {
               </button>
             </Row>
             <br />
-            <button className="boton4" onClick={manejarEnvio}>
+            <button className="boton4" onClick={botonRegistrar}>
               <b>Guardar</b>
             </button>
           </form>

@@ -7,6 +7,7 @@ import '../CSS/Formulario.css';
 import { Toaster, toast } from 'react-hot-toast';
 import getEvents from "../GetEvents";
 import UploadImage from "./UploadImages";
+import swal from 'sweetalert';
 
 function CampoBusqueda(props) {
   // Tenemos que manejar que ocurre cuando cambia el contenido del formulario.(el usuario escribe)
@@ -83,6 +84,35 @@ function Formulario(props) {
 
     /// Enviamos a la BlokChain los datos capturados
     await (await props.contrato.addVehiculo(nombres.value, fechaEmision.value, modelo.value, matricula.value)).wait();
+
+    ///! REVISAR
+    swal("¡Los datos se enviaron correctamente!", {
+      icon: "success",
+      timer: "2500"
+    });
+  }
+
+  const botonRegistrar = (e) => {
+    e.preventDefault();
+
+    swal({
+      title: "ENVIAR DATOS",
+      text: `Registrar los siguientes datos: 
+      \nNombre: ${document.getElementById("nombre").value}
+      \nFecha de emision: ${document.getElementById("fechaEmision").value}
+      \nFecha de vencimiento: ${document.getElementById("fechaVencimiento").value}
+      \nModelo: ${document.getElementById("modelo").value}
+      \nMatricula: ${document.getElementById("matricula").value}`,
+      icon: "info",
+      buttons: ["CANCELAR", "ACEPTAR"],
+    })
+      .then((sendData) => {
+        if (sendData) {
+          manejarEnvio(e)
+        } else {
+          swal("Los datos no serán enviados");
+        }
+      });
   }
 
   let content;
@@ -92,7 +122,7 @@ function Formulario(props) {
         <h1 className="h5">Ingrese los datos del usuario</h1>
         <br />
         <Container>
-          <form onSubmit={manejarEnvio}>
+          <form onSubmit={botonRegistrar}>
             <Row>
               <Col sm={12} md={12} lg={4} className="centrarFormulario">
                 <UploadImage />

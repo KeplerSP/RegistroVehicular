@@ -45,15 +45,7 @@ function App() {
     setLoading(false);
   }
 
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  //* Crear una función anónima que trabaje con los datos de registro del usuario
-  /// -> Le debo pasar a <Formulario /> esta función como parámetro
-  const dataToContract = (datos) => {
-    /// Le pasamos estos datos al Smart Contract
-  }
-
-  //! Se pasarán los SmartContracts desplegados a cada ruta para que puedan utilizar sus funciones.
+  //* Se pasarán los SmartContracts desplegados a cada ruta para que puedan utilizar sus funciones.
   return (
     <div className="App">
       <BrowserRouter>

@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 
-const UploadImage = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
-
+const UploadImage = (props) => {
   return (
     <>
-      {selectedImage && (
+      {props.selectedImage && (
         <div>
-          <img alt="not fount" height={"270px"} width={"250px"} src={URL.createObjectURL(selectedImage)} />
+          <img alt="not fount" height={"270px"} width={"250px"} src={URL.createObjectURL(props.selectedImage)} />
           <br />
-          <button onClick={() => setSelectedImage(null)}>Remover</button>
+          <button onClick={() => props.setSelectedImage(null)}>Remover</button>
         </div>
       )}
       <br />
@@ -18,7 +16,7 @@ const UploadImage = () => {
         name="myImage"
         onChange={(event) => {
           console.log(event.target.files[0]);
-          setSelectedImage(event.target.files[0]);
+          props.setSelectedImage(event.target.files[0]);
         }}
       />
     </>

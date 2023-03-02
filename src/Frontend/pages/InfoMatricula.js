@@ -2,7 +2,6 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
-import pic from '../img/profile_pic.png';
 import '../CSS/InfoMatricula.css';
 import { TablaVehiculos, TablaInfracciones } from '../components/TablaVehiculos';
 
@@ -18,7 +17,7 @@ function InfoMatricula(props) {
         <Row>
           <Col className="centrarFormulario">
             <Card style={{ width: '16rem' }} className="mx-auto d-block">
-              <Card.Img variant="top" src={pic} />
+              <Card.Img variant="top" src={`https://keplerg.infura-ipfs.io/ipfs/${data[5]}`} />
             </Card>
           </Col>
           <Col sm={12} md={12} lg={8} className="centrarFormulario">
@@ -46,8 +45,8 @@ function InfoMatricula(props) {
         <br />
         <h5 className='h5'>INFRACCIONES:</h5>
         <TablaInfracciones
-          cantidad={data[5].length}
-          infracciones={data[5]}
+          cantidad={data[6].length}
+          infracciones={data[6]}
         />
       </Container>
     </div>

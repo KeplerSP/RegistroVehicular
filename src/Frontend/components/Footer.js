@@ -12,10 +12,10 @@ export default function Footer() {
           <span>Contacto:</span>
         </div>
         <div>
-          <a target="_blank" href='' className='me-4 text-reset'>
+          <a target="_blank" href='https://keplersp.github.io/' className='me-4 text-reset'>
             <img src={GitHubPages} width="30" height="30" />
           </a>
-          <a target="_blank" href='https://github.com/Kepler-SP' className='me-4 text-reset'>
+          <a target="_blank" href='https://github.com/KeplerSP' className='me-4 text-reset'>
             <img src={GitHub} width="30" height="30" />
           </a>
           <a target="_blank" href='' className='me-4 text-reset'>

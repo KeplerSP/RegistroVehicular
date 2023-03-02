@@ -65,7 +65,7 @@ describe("RegistroVehicular Testing", function () {
 
     it("Solo personal autorizado puede registrar vehiculos", async function () {
       /// Fallar en caso una cuenta no autorizada intente ejecutar la función
-      await expect(registroVehicular.connect(addr2).addVehiculo("1", "2", "3", "4")).to.be.revertedWith(
+      await expect(registroVehicular.connect(addr2).addVehiculo("1", "2", "3", "4", "5")).to.be.revertedWith(
         "No tienes permisos de administrador"
       );
     });
@@ -76,7 +76,8 @@ describe("RegistroVehicular Testing", function () {
         "Patrick Bateman",
         "09/02/2023",
         "NISAN 2010",
-        "ABC123"
+        "ABC123",
+        "imagenUrlIpfs"
       );
       await tx.wait();
 
@@ -84,8 +85,7 @@ describe("RegistroVehicular Testing", function () {
       const events = await registroVehicular.queryFilter(eventFilter);
       /// 'events' recoge todas la coincidencias con el evento "NewMatricula()"
 
-      let prueba = (events[0].args)[2];
-
+      let prueba = (events[0].args)[1];
       for (let index = 0; index < prueba.length; index++) {
         const element = prueba[index];
         console.log(`Dato N°${index + 1}: ${element}`);
@@ -105,7 +105,7 @@ describe("RegistroVehicular Testing", function () {
     it("Solo personal autorizado puede editar informacion", async function () {
       /// Fallar en caso una cuenta no autorizada intente ejecutar la función
       await expect(registroVehicular.connect(addr2).editInfo(
-        ["Patrick Bateman", "09/02/2023", "NISAN 2010", "ABC123", true, []],
+        ["Patrick Bateman", "09/02/2023", "NISAN 2010", "ABC123", true, "urlImgIpfs", []],
         false,
         [{ nombre: "infraccion", fecha: "fecha" }]
       )).to.be.revertedWith(
@@ -120,7 +120,7 @@ describe("RegistroVehicular Testing", function () {
       }
       /// Agregamos un nuevo vehiculo y verificamos el evento respectivo
       const tx = await registroVehicular.connect(addr1).editInfo(
-        ["Patrick Bateman", "09/02/2023", "NISAN 2010", "ABC123", true, [data]],
+        ["Patrick Bateman", "09/02/2023", "NISAN 2010", "ABC123", true, "urlImgIpfs", [data]],
         false,
         [data]
       )
@@ -130,14 +130,14 @@ describe("RegistroVehicular Testing", function () {
       const events = await registroVehicular.queryFilter(eventFilter);
       /// 'events' recoge todas la coincidencias con el evento "NewMatricula()"
 
-      let prueba = (events[0].args)[2];
-      
+      let prueba = (events[0].args)[1];
+
       for (let index = 0; index < prueba.length; index++) {
         const element = prueba[index];
         console.log(`Dato N°${index + 1}: ${element}`);
 
         /// Entramos al arreglo de infracciones y obtenemos su elementos individuales
-        if (index == 5) {
+        if (index == 6) {
           /// En este caso el array de infracciones solo contiene un objeto de tipo infraccion
           console.log("Arreglo Completo:", element);
           console.log("CONDICION:", element[0][0]);

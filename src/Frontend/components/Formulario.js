@@ -8,6 +8,24 @@ import { Toaster, toast } from 'react-hot-toast';
 import getEvents from "../GetEvents";
 import UploadImage from "./UploadImages";
 import swal from 'sweetalert';
+///Instanciamos IFPS || Ya tiene un nodo establecido en Infura
+import { create as ipfsHttpClient } from 'ipfs-http-client';
+
+import { Buffer } from 'buffer';
+
+const projectId = '2MQalSWbVWYdj8kOh8qIjnH4Inz';
+const projectSecret = 'f001e8bb819e51c30eab72ae8575a0a9';
+const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+
+const client = ipfsHttpClient({
+  host: 'ipfs.infura.io',
+  port: 5001,
+  protocol: 'https',
+  apiPath: '/api/v0',
+  headers: {
+    authorization: auth
+  }
+});
 
 function CampoBusqueda(props) {
   // Tenemos que manejar que ocurre cuando cambia el contenido del formulario.(el usuario escribe)
@@ -71,10 +89,22 @@ function CampoBusqueda(props) {
 
 //* Componente que contiene el formulario para registrar un vehiculo
 function Formulario(props) {
-  // Se recibe como argumento un evento, este valor nos va a permitir que la pagina
-  // se vuelva a cargar cuando se envie el formulario.
+  // Capturar la imagen desde el archivo UploadImages
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageipfs, setImageipfs] = useState('');
+
   const manejarEnvio = async (e) => {
     e.preventDefault(); ///->Evita que se vuelva a carga la app al enviar el formulario.
+
+    let imageHash;
+    try {
+      const result = await client.add(selectedImage);  ///subir la imagen a ipfs
+      console.log(result);
+      imageHash = result.path;
+      setImageipfs(`https://keplerg.infura-ipfs.io/ipfs/${result.path}`); /// obtener la url de la imagen subida
+    } catch (error) {
+      console.log("ipfs image upload error: ", error);
+    }
 
     var nombres = document.getElementById("nombre");
     var fechaEmision = document.getElementById("fechaEmision");
@@ -83,12 +113,11 @@ function Formulario(props) {
     var matricula = document.getElementById("matricula");
 
     /// Enviamos a la BlokChain los datos capturados
-    await (await props.contrato.addVehiculo(nombres.value, fechaEmision.value, modelo.value, matricula.value)).wait();
+    await (await props.contrato.addVehiculo(nombres.value, fechaEmision.value, modelo.value, matricula.value, imageHash)).wait();
 
-    ///! REVISAR
     swal("¡Los datos se enviaron correctamente!", {
       icon: "success",
-      timer: "2500"
+      timer: "2100"
     });
   }
 
@@ -102,7 +131,8 @@ function Formulario(props) {
       \nFecha de emision: ${document.getElementById("fechaEmision").value}
       \nFecha de vencimiento: ${document.getElementById("fechaVencimiento").value}
       \nModelo: ${document.getElementById("modelo").value}
-      \nMatricula: ${document.getElementById("matricula").value}`,
+      \nMatricula: ${document.getElementById("matricula").value}
+      \nImagen: ${selectedImage.name}`,
       icon: "info",
       buttons: ["CANCELAR", "ACEPTAR"],
     })
@@ -115,6 +145,9 @@ function Formulario(props) {
       });
   }
 
+  //!!!!!
+  console.log("LINK IPFS DE LA IMAGEN:", imageipfs)
+
   let content;
   if (props.opcion == 1) {
     content =
@@ -125,14 +158,14 @@ function Formulario(props) {
           <form onSubmit={botonRegistrar}>
             <Row>
               <Col sm={12} md={12} lg={4} className="centrarFormulario">
-                <UploadImage />
+                <UploadImage selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
               </Col>
               <Col className="centrarFormulario">
                 <Row sm={12} md={12} lg={12}>
                   <h5 className='h5'>Nombres y Apellidos</h5>
                   <input
                     type='text'
-                    placeholder='Ejemplo DBA-005'
+                    placeholder='Joshep Joestar'
                     name='Texto'
                     id="nombre"
                     required

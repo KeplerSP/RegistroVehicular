@@ -14,12 +14,8 @@ contract RegistroVehicular is Ownable {
     mapping(address => bool) public autorizados;
 
     //* Eventos
-    event NewMatricula(string matricula, uint256 timeStamp, InfoMatricula info);
-    event UpdateMatricula(
-        string matricula,
-        uint256 timeStamp,
-        InfoMatricula info
-    );
+    event NewMatricula(string matricula, InfoMatricula info);
+    event UpdateMatricula(string matricula, InfoMatricula info);
     event PersonalAgregado(string message, address newPersonal);
 
     //* Structs
@@ -34,6 +30,7 @@ contract RegistroVehicular is Ownable {
         string modeloVehiculo;
         string matricula;
         bool vigencia;
+        string imageHash;
         Infracciones[] infracciones;
     }
 
@@ -57,7 +54,8 @@ contract RegistroVehicular is Ownable {
         string memory _nombre,
         string memory _emision,
         string memory _modeloVehiculo,
-        string memory _matricula
+        string memory _matricula,
+        string memory _imageHash
     ) external personalAutorizado(msg.sender) {
         /// Por defecto un vehiculo se registrará con 0 infracciones
         InfoMatricula memory info;
@@ -68,10 +66,11 @@ contract RegistroVehicular is Ownable {
         info.modeloVehiculo = _modeloVehiculo;
         info.matricula = _matricula;
         info.vigencia = true;
+        info.imageHash = _imageHash;
         info.infracciones = infracciones;
 
         //* Emitimos un evento para la matricula creada
-        emit NewMatricula(info.matricula, block.timestamp, info);
+        emit NewMatricula(info.matricula, info);
     }
 
     //todo:  Función para editar información de un vehiculo -> Agregar infracciones
@@ -114,14 +113,10 @@ contract RegistroVehicular is Ownable {
         /// Ahora 'infracciones' contiene los elementos pasados más los nuevos ingresados por parametro
         /// Actualizamos el valor del array dentro del struct '_infoMatricula' con el nuevo array recien creado("infracciones")
         _infoMatricula.infracciones = infracciones;
-        
+
         _infoMatricula.vigencia = _vigencia;
 
         //* Emitimos un evento para la matricula actualizada
-        emit UpdateMatricula(
-            _infoMatricula.matricula,
-            block.timestamp,
-            _infoMatricula
-        );
+        emit UpdateMatricula(_infoMatricula.matricula, _infoMatricula);
     }
 }

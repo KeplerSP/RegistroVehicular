@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import Nav from 'react-bootstrap/Nav';
-import { ethers } from 'ethers';
 import { Link, Outlet } from "react-router-dom";
 import '../CSS/Buscador.css';
 
@@ -32,7 +31,7 @@ function IngresarDatos(props) {
       </>
   }
 
-  /// Outlet contiene formulario
+  /// Outlet contiene 'Formulario'
   return (
     <div >
       <header> {header} </header>

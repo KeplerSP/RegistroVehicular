@@ -25,12 +25,7 @@ export function TablaVehiculos(props) {
 export function TablaInfracciones(props) {
   let cantidad = props.cantidad;
   let arregloInfracciones = props.infracciones;
-  // let arregloInfracciones = [
-  //   { nombre: "elemento 0", fecha: "elemento 1" },
-  //   { nombre: "elemento 2", fecha: "elemento 3" },
-  //   { nombre: "elemento 4", fecha: "elemento 5" }
-  // ];
-
+  
   return (
     <Table striped bordered hover size='sm'>
       <thead>

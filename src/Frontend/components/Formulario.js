@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -8,13 +8,14 @@ import { Toaster, toast } from 'react-hot-toast';
 import getEvents from "../GetEvents";
 import UploadImage from "./UploadImages";
 import swal from 'sweetalert';
+import Spinner from 'react-bootstrap/Spinner';
 ///Instanciamos IFPS || Ya tiene un nodo establecido en Infura
 import { create as ipfsHttpClient } from 'ipfs-http-client';
 
 import { Buffer } from 'buffer';
 
-const projectId = '2MQalSWbVWYdj8kOh8qIjnH4Inz';
-const projectSecret = 'f001e8bb819e51c30eab72ae8575a0a9';
+const projectId = process.env.REACT_APP_PROJECT_ID;
+const projectSecret = process.env.REACT_APP_PROJECT_SECRET;
 const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
 
 const client = ipfsHttpClient({
@@ -32,6 +33,7 @@ function CampoBusqueda(props) {
   const [input, setInput] = useState('');
   const [existe, setExiste] = useState(false)
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const manejarCambio = e => {
     // e.target.value => nos va a permitir extraer el valor del campo de texto que introdujo el usuario.
@@ -42,15 +44,16 @@ function CampoBusqueda(props) {
   const manejarEnvio = async (e) => {
     e.preventDefault(); //->Evita que se vuelva a carga la app al enviar el formulario.
     console.log(props.contrato)
+    setLoading(true)
     /// Comprobamos con los eventos emitidos en la BlockChain si la matricula que se busca existe
     const data = await getEvents(props.contrato, input)
-    console.log("data", data)
     if (data[3] != "") {
       toast.success('¡Busqueda exitosa!')
       setExiste(true)
       setData(data)
     } else {
       /// En caso contrario, emitir una alerta
+      setLoading(false)
       toast.error("La matricula no esta en nuestro sistema 🙁")
     }
 
@@ -62,21 +65,32 @@ function CampoBusqueda(props) {
   } else {
     contenido =
       <div className="centrado cuerpo">
-        <h5>Matricula</h5>
-        <form onSubmit={manejarEnvio} >
-          <input
-            className="buscador"
-            type='text'
-            placeholder='Matricula a Buscar'
-            name='Texto'
-            onChange={manejarCambio}
-            required
-          />
-          <br />
-          <button className="boton">
-            BUSCAR
-          </button>
-        </form>
+        {loading ? (
+          <>
+            <h3>BUSCANDO DATOS...</h3>
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </>
+        ) : (
+          <>
+            <h5>Matricula</h5>
+            <form onSubmit={manejarEnvio} >
+              <input
+                className="buscador"
+                type='text'
+                placeholder='Matricula a Buscar'
+                name='Texto'
+                onChange={manejarCambio}
+                required
+              />
+              <br />
+              <button className="boton">
+                BUSCAR
+              </button>
+            </form>
+          </>
+        )}
       </div>
   }
 
@@ -91,7 +105,6 @@ function CampoBusqueda(props) {
 function Formulario(props) {
   // Capturar la imagen desde el archivo UploadImages
   const [selectedImage, setSelectedImage] = useState(null);
-  const [imageipfs, setImageipfs] = useState('');
 
   const manejarEnvio = async (e) => {
     e.preventDefault(); ///->Evita que se vuelva a carga la app al enviar el formulario.
@@ -101,23 +114,21 @@ function Formulario(props) {
       const result = await client.add(selectedImage);  ///subir la imagen a ipfs
       console.log(result);
       imageHash = result.path;
-      setImageipfs(`https://keplerg.infura-ipfs.io/ipfs/${result.path}`); /// obtener la url de la imagen subida
     } catch (error) {
       console.log("ipfs image upload error: ", error);
     }
 
     var nombres = document.getElementById("nombre");
     var fechaEmision = document.getElementById("fechaEmision");
-    // var fechaVencimiento = document.getElementById("fechaVencimiento"); /// NO USAR
     var modelo = document.getElementById("modelo");
     var matricula = document.getElementById("matricula");
 
     /// Enviamos a la BlokChain los datos capturados
-    await (await props.contrato.addVehiculo(nombres.value, fechaEmision.value, modelo.value, matricula.value, imageHash)).wait();
+    await (await props.contrato.addVehiculo(nombres.value, fechaEmision.value, modelo.value, matricula.value.toUpperCase(), imageHash)).wait();
 
     swal("¡Los datos se enviaron correctamente!", {
       icon: "success",
-      timer: "2100"
+      timer: "1850"
     });
   }
 
@@ -145,9 +156,6 @@ function Formulario(props) {
       });
   }
 
-  //!!!!!
-  console.log("LINK IPFS DE LA IMAGEN:", imageipfs)
-
   let content;
   if (props.opcion == 1) {
     content =
@@ -165,7 +173,7 @@ function Formulario(props) {
                   <h5 className='h5'>Nombres y Apellidos</h5>
                   <input
                     type='text'
-                    placeholder='Joshep Joestar'
+                    placeholder='Ejemplo: Joshep Joestar'
                     name='Texto'
                     id="nombre"
                     required
@@ -177,7 +185,6 @@ function Formulario(props) {
                     <h5 className='h5'>Emision del carnet</h5>
                     <input
                       type='date'
-                      placeholder='Ejemplo DBA-005'
                       name='Texto'
                       id="fechaEmision"
                       required
@@ -187,7 +194,6 @@ function Formulario(props) {
                     <h5 className='h5'>Vencimiento</h5>
                     <input
                       type='date'
-                      placeholder='Ejemplo DBA-005'
                       name='Texto'
                       id="fechaVencimiento"
                       required
@@ -210,7 +216,7 @@ function Formulario(props) {
                     <h5 className='h5'>Matricula</h5>
                     <input
                       type='text'
-                      placeholder='Ejemplo: DBA-005'
+                      placeholder='Ejm: DBA-005'
                       name='Texto'
                       id="matricula"
                       required

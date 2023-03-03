@@ -12,8 +12,10 @@ const UploadImage = (props) => {
       )}
       <br />
       <input
+        accept="image/png,image/jpeg"
         type="file"
         name="myImage"
+        required
         onChange={(event) => {
           console.log(event.target.files[0]);
           props.setSelectedImage(event.target.files[0]);

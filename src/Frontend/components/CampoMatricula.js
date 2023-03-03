@@ -11,12 +11,8 @@ function CampoMatricula(props) {
     setInput(e.target.value);
   }
 
-  // Se recibe como argumento un evento, este valor nos va a permitir que la pagina
-  // se vuelva a cargar cuando se envie el formulario.
   const manejarEnvio = e => {
     e.preventDefault(); //->Evita que se vuelva a carga la app al enviar el formulario.
-
-    //! MODIFICAR de acuerdo a la informacion a mostrar de una matricula
 
     //•onSubmit -> Función que se pasará como parámetro mediante un prop. (el nombre es un estandar)
     props.onSubmit(input);

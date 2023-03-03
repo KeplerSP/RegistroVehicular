@@ -6,6 +6,7 @@ import InfoMatricula from './InfoMatricula';
 import Footer from '../components/Footer';
 import { Toaster, toast } from 'react-hot-toast';
 import { ethers } from 'ethers';
+import Spinner from 'react-bootstrap/Spinner';
 ///Importamos información del SC
 import RegistroVehicularAbi from '../contractsData/RegistroVehicular.json';
 import RegistroVehicularAddress from '../contractsData/RegistroVehicular-address.json';
@@ -17,12 +18,11 @@ function Home() {
   const [registroVehicular, setRegistroVehicular] = useState({});
   const [loadForm, setLoadForm] = useState(true);
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const getContract = async () => {
-    // Default: http://localhost:8545
-    /// let url = "http://something-else.com:8546";
-    /// let customHttpProvider = new ethers.providers.JsonRpcProvider(url);
-    let httpProvider = new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
+    let url = "https://endpoints.omniatech.io/v1/matic/mumbai/public";
+    let httpProvider = new ethers.providers.JsonRpcProvider(url);
     const registroVehicular = new ethers.Contract(RegistroVehicularAddress.address, RegistroVehicularAbi.abi, httpProvider);
     setRegistroVehicular(registroVehicular);
   }
@@ -33,14 +33,16 @@ function Home() {
 
   // Crear una función anónima que trabaje con la matricula ingresada
   const pasarMatricula = async (matricula) => {
+    setLoading(true)
     /// Comprobamos con los eventos emitidos en la BlockChain si la matricula que se busca existe
-    const data = await getEvents(registroVehicular, matricula)
+    const data = await getEvents(registroVehicular, matricula.toUpperCase())
     setData(data)
     console.log("EVENTO CAPTURADO EN HOME: ", data)
     /// Si la matricula existe, mostrar sus datos en pantalla
     if (data[3] != "") {
       setLoadForm(false);
     } else {
+      setLoading(false)
       /// En caso contrario, emitir una alerta
       toast.error("La matricula no esta en nuestro sistema 🙁")
     }
@@ -55,10 +57,21 @@ function Home() {
       <body>
         {loadForm ? (
           <>
-            <Container>
-              <CampoMatricula onSubmit={pasarMatricula} />
-            </Container>
-            <Footer />
+            {loading ? (
+              <div className="centrado cuerpo">
+                <h4>BUSCANDO MATRICULA...</h4>
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            ) : (
+              <>
+                <Container>
+                  <CampoMatricula onSubmit={pasarMatricula} />
+                </Container>
+                <Footer />
+              </>
+            )}
           </>
         ) : (
           <InfoMatricula data={data} />

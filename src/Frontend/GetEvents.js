@@ -1,6 +1,6 @@
 export default async function getEvents(contrato, matricula) {
   //* Primero revisar con UpdateMatricula, sino encontramos nada entonces pasamos e NewMatricula
-  return getMatriculaInfo(contrato, matricula)
+  return getMatriculaInfo(contrato, matricula.toUpperCase())
 }
 
 async function getMatriculaInfo(contrato, matricula) {

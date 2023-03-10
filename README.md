@@ -1,6 +1,6 @@
-# Sample Hardhat Project
+# REGISTRO VEHICULAR
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+Proyecto realizado con React, Solidity, Hardhat y Ethers.js. Además de librerias de apoyo para el diseño del Frontend.  
 
 Try running some of the following tasks:
 
@@ -10,4 +10,5 @@ npx hardhat test src/Backend/test/RegistroVehicular.js
 REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat run src/Backend/scripts/deploy.js
+npm start
 ```
